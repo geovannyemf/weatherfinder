@@ -1,4 +1,4 @@
-import rawCities from '../resources/data/pokédensity-cities.json';
+import rawCities from '../resources/data/pokedensity-cities.json';
 
 const cities = rawCities.map(({ lng, ...rest }, index) => ({
   ...rest,
