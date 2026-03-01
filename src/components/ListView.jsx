@@ -18,16 +18,19 @@ function getLocalHour(timezone) {
 }
 
 function getLocalTime(timezone) {
+  const options = {
+    weekday: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  };
   try {
-    return new Date().toLocaleString('es-ES', {
-      timeZone: timezone,
-      weekday: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    if (timezone) {
+      return new Date().toLocaleString('es-ES', { ...options, timeZone: timezone });
+    }
+    return new Date().toLocaleString('es-ES', options);
   } catch {
-    return '--';
+    return new Date().toLocaleString('es-ES', options);
   }
 }
 
