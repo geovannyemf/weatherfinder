@@ -30,8 +30,14 @@ function getLocalHour(timezone) {
   }
 }
 
+const OPEN_METEO_PARAMS = 'current=temperature_2m,precipitation,weathercode,relative_humidity_2m,windspeed_10m,apparent_temperature&forecast_days=1';
+
+function buildWeatherUrl(city) {
+  return `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&${OPEN_METEO_PARAMS}&timezone=${city.timezone}`;
+}
+
 async function fetchCityWeather(city) {
-  const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&current=temperature_2m,precipitation,weathercode,relative_humidity_2m,windspeed_10m,apparent_temperature&timezone=${city.timezone}&forecast_days=1`;
+  const url = buildWeatherUrl(city);
   const res = await fetch(url);
   if (!res.ok) throw new Error('API error');
   const data = await res.json();
