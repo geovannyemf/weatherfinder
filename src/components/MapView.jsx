@@ -67,16 +67,25 @@ export default function MapView({ cities, weatherData }) {
 
         let localTime = '--';
         try {
+          const options = {
+            weekday: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          };
           if (w?.timezone) {
             localTime = new Date().toLocaleString('es-ES', {
-              timeZone: w.timezone,
-              weekday: 'short',
-              day: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit'
+              ...options,
+              timeZone: w.timezone
             });
+          } else {
+            // Fallback to browser-local time when timezone is missing
+            localTime = new Date().toLocaleString('es-ES', options);
           }
-        } catch { /* use fallback */ }
+        } catch {
+          // Final fallback: browser-local time without explicit timezone
+          localTime = new Date().toLocaleString('es-ES');
+        }
 
         const coords = `${city.lat.toFixed(6)},${city.lon.toFixed(6)}`;
         const popupId = `copy-btn-${city.id}`;
