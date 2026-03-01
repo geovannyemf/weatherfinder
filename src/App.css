@@ -31,11 +31,14 @@ html, body, #root {
   overflow-x: hidden;
 }
 
-/* Background themes */
-.bg-lluvia { background: linear-gradient(180deg, #050a0f 0%, #081525 100%); }
-.bg-nieve { background: linear-gradient(180deg, #050a0f 0%, #0a1020 100%); }
-.bg-soleado { background: linear-gradient(180deg, #0a0805 0%, #1a1205 100%); }
-.bg-tormenta { background: linear-gradient(180deg, #050a0f 0%, #100a05 100%); }
+/* Background themes - Pokémon GO Weather System */
+.bg-SUNNY { background: linear-gradient(180deg, #0a0805 0%, #1a1205 100%); }
+.bg-PARTLY_CLOUDY { background: linear-gradient(180deg, #050a0f 0%, #0f1520 100%); }
+.bg-CLOUDY { background: linear-gradient(180deg, #050a0f 0%, #101520 100%); }
+.bg-RAIN { background: linear-gradient(180deg, #050a0f 0%, #081525 100%); }
+.bg-SNOW { background: linear-gradient(180deg, #050a0f 0%, #0a1020 100%); }
+.bg-FOG { background: linear-gradient(180deg, #0a0510 0%, #150a20 100%); }
+.bg-WINDY { background: linear-gradient(180deg, #050f0a 0%, #0a2015 100%); }
 .bg-default { background: var(--bg-primary); }
 
 /* HEADER */
@@ -447,6 +450,62 @@ h1 {
   font-size: 0.7rem;
   color: var(--text-secondary);
   text-align: right;
+}
+
+.card-coords {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.coords-text {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+}
+
+.copy-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.75rem;
+  padding: 2px 4px;
+  border-radius: 4px;
+  opacity: 0.6;
+  transition: opacity 0.2s, background 0.2s;
+}
+
+.copy-btn:hover {
+  opacity: 1;
+  background: rgba(255,255,255,0.1);
+}
+
+.popup-coords {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 4px;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+}
+
+.popup-copy-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.8rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  opacity: 0.7;
+  transition: opacity 0.2s, background 0.2s;
+}
+
+.popup-copy-btn:hover {
+  opacity: 1;
+  background: rgba(0,0,0,0.1);
 }
 
 /* BG ANIMATIONS */

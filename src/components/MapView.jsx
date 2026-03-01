@@ -67,8 +67,17 @@ export default function MapView({ cities, weatherData }) {
 
         let localTime = '--';
         try {
-          localTime = new Date().toLocaleString('es-ES', { timeZone: city.timezone, hour: '2-digit', minute: '2-digit' });
+          localTime = new Date().toLocaleString('es-ES', {
+            timeZone: city.timezone,
+            weekday: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          });
         } catch { /* use fallback */ }
+
+        const coords = `${city.lat.toFixed(6)},${city.lon.toFixed(6)}`;
+        const popupId = `copy-btn-${city.id}`;
 
         marker.bindPopup(`
           <div class="map-popup">
@@ -80,8 +89,19 @@ export default function MapView({ cities, weatherData }) {
             <div class="popup-row">Precipitación: ${w?.precipitation != null ? w.precipitation + ' mm' : '--'}</div>
             <div class="popup-row popup-condition" style="color:${color}">${condition?.label || '--'}</div>
             <div class="popup-row popup-time">🕐 ${localTime}</div>
+            <div class="popup-row popup-coords">
+              <span>📍 ${coords}</span>
+              <button class="popup-copy-btn" id="${popupId}" title="Copiar coordenadas">📋</button>
+            </div>
           </div>
         `);
+
+        marker.on('popupopen', () => {
+          const btn = document.getElementById(popupId);
+          if (btn) {
+            btn.onclick = () => navigator.clipboard.writeText(coords);
+          }
+        });
 
         marker.addTo(mapInstanceRef.current);
         markersRef.current.push(marker);

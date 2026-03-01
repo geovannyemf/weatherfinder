@@ -1,40 +1,176 @@
-export function getConditionFromCode(code) {
-  if (code === 0) return 'soleado';
-  if (code === 1 || code === 2) return 'parcial';
-  if (code === 3) return 'nublado';
-  if (code === 45 || code === 48) return 'niebla';
-  if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) return 'lluvia';
-  if ((code >= 71 && code <= 77) || code === 85 || code === 86) return 'nieve';
-  if (code >= 95 && code <= 99) return 'tormenta';
-  return 'nublado';
-}
+// Sistema de clasificación de clima Pokémon GO
+// Basado en los 7 climas oficiales del juego
 
-const CONDITIONS = {
-  soleado: { label: 'Soleado', icon: '☀️', type: 'soleado', color: '#FFD700', isActive: false },
-  parcial: { label: 'Parcial', icon: '⛅', type: 'parcial', color: '#A0AEC0', isActive: false },
-  nublado: { label: 'Nublado', icon: '☁️', type: 'nublado', color: '#718096', isActive: false },
-  niebla: { label: 'Niebla', icon: '🌫️', type: 'niebla', color: '#9F7AEA', isActive: true },
-  lluvia: { label: 'Lluvia', icon: '🌧️', type: 'lluvia', color: '#4299E1', isActive: true },
-  nieve: { label: 'Nieve', icon: '🌨️', type: 'nieve', color: '#63B3ED', isActive: true },
-  tormenta: { label: 'Tormenta', icon: '⛈️', type: 'tormenta', color: '#ED8936', isActive: true },
-  viento: { label: 'Viento fuerte', icon: '💨', type: 'viento', color: '#48BB78', isActive: true },
+export const PGO_WEATHERS = {
+  SUNNY: {
+    id: 'SUNNY',
+    type: 'SUNNY',
+    label: 'Soleado',
+    icon: '☀️',
+    color: '#FFD700',
+    boostedTypes: ['Fuego', 'Planta', 'Tierra'],
+    isActive: false,
+  },
+  PARTLY_CLOUDY: {
+    id: 'PARTLY_CLOUDY',
+    type: 'PARTLY_CLOUDY',
+    label: 'Parcialmente Nublado',
+    icon: '⛅',
+    color: '#A0AEC0',
+    boostedTypes: ['Normal', 'Roca'],
+    isActive: false,
+  },
+  CLOUDY: {
+    id: 'CLOUDY',
+    type: 'CLOUDY',
+    label: 'Nublado',
+    icon: '☁️',
+    color: '#718096',
+    boostedTypes: ['Lucha', 'Veneno', 'Hada'],
+    isActive: false,
+  },
+  RAIN: {
+    id: 'RAIN',
+    type: 'RAIN',
+    label: 'Lluvia',
+    icon: '🌧️',
+    color: '#4299E1',
+    boostedTypes: ['Agua', 'Eléctrico', 'Insecto'],
+    isActive: true,
+  },
+  SNOW: {
+    id: 'SNOW',
+    type: 'SNOW',
+    label: 'Nieve',
+    icon: '❄️',
+    color: '#63B3ED',
+    boostedTypes: ['Hielo', 'Acero'],
+    isActive: true,
+  },
+  FOG: {
+    id: 'FOG',
+    type: 'FOG',
+    label: 'Niebla',
+    icon: '🌫️',
+    color: '#9F7AEA',
+    boostedTypes: ['Fantasma', 'Siniestro'],
+    isActive: true,
+  },
+  WINDY: {
+    id: 'WINDY',
+    type: 'WINDY',
+    label: 'Ventoso',
+    icon: '💨',
+    color: '#48BB78',
+    boostedTypes: ['Dragón', 'Volador', 'Psíquico'],
+    isActive: true,
+  },
 };
 
-export function getCondition(weathercode, windspeed) {
-  if (windspeed > 40) return CONDITIONS.viento;
-  const type = getConditionFromCode(weathercode);
-  return CONDITIONS[type];
+// Mapeo de weathercode de Open-Meteo a clima base PGO
+// Open-Meteo WMO codes: https://open-meteo.com/en/docs
+function getBaseWeatherFromCode(code) {
+  // Despejado
+  if (code === 0) return 'SUNNY';
+  // Parcialmente nublado
+  if (code === 1 || code === 2) return 'PARTLY_CLOUDY';
+  // Nublado
+  if (code === 3) return 'CLOUDY';
+  // Niebla
+  if (code === 45 || code === 48) return 'FOG';
+  // Lluvia (llovizna, lluvia, chubascos)
+  if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) return 'RAIN';
+  // Nieve (nevada, aguanieve, granizo)
+  if ((code >= 71 && code <= 77) || code === 85 || code === 86) return 'SNOW';
+  // Tormenta → se clasifica como RAIN en PGO
+  if (code >= 95 && code <= 99) return 'RAIN';
+  return 'CLOUDY';
 }
 
+/**
+ * Clasifica el clima según el sistema de Pokémon GO
+ * 
+ * @param {Object} params - Parámetros meteorológicos
+ * @param {number} params.weathercode - Código WMO de Open-Meteo
+ * @param {number} params.windspeed - Velocidad del viento en km/h
+ * @param {number} params.windgust - Ráfaga de viento en km/h (opcional)
+ * @param {number} params.temperature - Temperatura en °C
+ * @param {number} params.precipitation - Precipitación en mm
+ * @param {number} params.cloudcover - Cobertura de nubes en % (0-100)
+ * @param {number} params.visibility - Visibilidad en km (opcional)
+ * @returns {Object} Objeto con la condición PGO
+ */
+export function classifyPGOWeather({
+  weathercode,
+  windspeed = 0,
+  windgust = 0,
+  temperature = 20,
+  precipitation = 0,
+  cloudcover = 0,
+  visibility = 10,
+}) {
+  let weatherId;
+  let classificationSource = 'weathercode';
+  let windOverride = false;
+
+  // PASO 1: Determinar clima base
+  if (weathercode != null) {
+    weatherId = getBaseWeatherFromCode(weathercode);
+  } else {
+    // Fallback por parámetros brutos (orden de prioridad)
+    classificationSource = 'raw_params';
+    
+    if (visibility < 1) {
+      weatherId = 'FOG';
+    } else if (temperature <= 0 && precipitation > 0) {
+      weatherId = 'SNOW';
+    } else if (precipitation >= 0.5) {
+      weatherId = 'RAIN';
+    } else if (cloudcover >= 85) {
+      weatherId = 'CLOUDY';
+    } else if (cloudcover >= 40) {
+      weatherId = 'PARTLY_CLOUDY';
+    } else {
+      weatherId = 'SUNNY';
+    }
+  }
+
+  // PASO 2: Override de viento (siempre se evalúa)
+  // Si wind_speed_kmh >= 24 O wind_gust_kmh >= 35 → WINDY
+  if (windspeed >= 24 || windgust >= 35) {
+    weatherId = 'WINDY';
+    windOverride = true;
+  }
+
+  const weather = PGO_WEATHERS[weatherId];
+
+  return {
+    ...weather,
+    type: weatherId,
+    classificationSource,
+    windOverride,
+  };
+}
+
+// Función de compatibilidad con el código existente
+export function getCondition(weathercode, windspeed, extraParams = {}) {
+  return classifyPGOWeather({
+    weathercode,
+    windspeed,
+    ...extraParams,
+  });
+}
+
+// Colores por tipo de clima (para MapView y otros componentes)
 export const CONDITION_COLORS = {
-  lluvia: '#4299E1',
-  nieve: '#63B3ED',
-  soleado: '#FFD700',
-  nublado: '#718096',
-  parcial: '#718096',
-  tormenta: '#ED8936',
-  niebla: '#9F7AEA',
-  viento: '#48BB78',
+  SUNNY: '#FFD700',
+  PARTLY_CLOUDY: '#A0AEC0',
+  CLOUDY: '#718096',
+  RAIN: '#4299E1',
+  SNOW: '#63B3ED',
+  FOG: '#9F7AEA',
+  WINDY: '#48BB78',
 };
 
-export const ALL_CONDITIONS = Object.values(CONDITIONS);
+// Lista de todas las condiciones para filtros
+export const ALL_CONDITIONS = Object.values(PGO_WEATHERS);

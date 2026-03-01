@@ -30,7 +30,7 @@ function getLocalHour(timezone) {
   }
 }
 
-const OPEN_METEO_PARAMS = 'current=temperature_2m,precipitation,weathercode,relative_humidity_2m,windspeed_10m,apparent_temperature&forecast_days=1';
+const OPEN_METEO_PARAMS = 'current=temperature_2m,precipitation,weathercode,relative_humidity_2m,windspeed_10m,windgusts_10m,apparent_temperature,cloudcover,visibility&forecast_days=1';
 
 function buildWeatherUrl(city) {
   return `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&${OPEN_METEO_PARAMS}&timezone=${city.timezone}`;
@@ -42,16 +42,26 @@ async function fetchCityWeather(city) {
   if (!res.ok) throw new Error('API error');
   const data = await res.json();
   const current = data.current;
-  const weathercode = current.weathercode;
-  const windspeed = current.windspeed_10m;
+  
+  const weatherParams = {
+    weathercode: current.weathercode,
+    windspeed: current.windspeed_10m,
+    windgust: current.windgusts_10m ?? 0,
+    temperature: current.temperature_2m,
+    precipitation: current.precipitation,
+    cloudcover: current.cloudcover ?? 0,
+    visibility: (current.visibility ?? 10000) / 1000,
+  };
+
   return {
     temperature: current.temperature_2m,
     feelsLike: current.apparent_temperature,
     humidity: current.relative_humidity_2m,
     precipitation: current.precipitation,
-    windspeed,
-    weathercode,
-    condition: getCondition(weathercode, windspeed),
+    windspeed: weatherParams.windspeed,
+    windgust: weatherParams.windgust,
+    weathercode: weatherParams.weathercode,
+    condition: getCondition(weatherParams.weathercode, weatherParams.windspeed, weatherParams),
   };
 }
 
@@ -142,9 +152,9 @@ export default function App() {
 
   return (
     <div className={`app bg-${dominantCondition}`}>
-      {dominantCondition === 'lluvia' && <RainAnimation />}
-      {dominantCondition === 'nieve' && <SnowAnimation />}
-      {dominantCondition === 'soleado' && <SunAnimation />}
+      {dominantCondition === 'RAIN' && <RainAnimation />}
+      {dominantCondition === 'SNOW' && <SnowAnimation />}
+      {dominantCondition === 'SUNNY' && <SunAnimation />}
 
       <header className="app-header">
         <div className="header-title">

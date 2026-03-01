@@ -1,5 +1,13 @@
 import { CONDITION_COLORS } from '../weatherUtils';
 
+function formatCoords(lat, lon) {
+  return `${lat.toFixed(6)},${lon.toFixed(6)}`;
+}
+
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text);
+}
+
 function getLocalHour(timezone) {
   try {
     const str = new Date().toLocaleString('es-ES', { timeZone: timezone, hour: '2-digit', hour12: false });
@@ -11,7 +19,13 @@ function getLocalHour(timezone) {
 
 function getLocalTime(timezone) {
   try {
-    return new Date().toLocaleString('es-ES', { timeZone: timezone, hour: '2-digit', minute: '2-digit' });
+    return new Date().toLocaleString('es-ES', {
+      timeZone: timezone,
+      weekday: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   } catch {
     return '--';
   }
@@ -87,6 +101,16 @@ export default function ListView({ cities, weatherData, sortBy }) {
               </div>
             </div>
             <div className="card-time">🕐 {localTime}</div>
+            <div className="card-coords">
+              <span className="coords-text">📍 {formatCoords(city.lat, city.lon)}</span>
+              <button
+                className="copy-btn"
+                onClick={() => copyToClipboard(formatCoords(city.lat, city.lon))}
+                title="Copiar coordenadas"
+              >
+                📋
+              </button>
+            </div>
           </div>
         );
       })}
