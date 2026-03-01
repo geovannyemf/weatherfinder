@@ -67,13 +67,15 @@ export default function MapView({ cities, weatherData }) {
 
         let localTime = '--';
         try {
-          localTime = new Date().toLocaleString('es-ES', {
-            timeZone: city.timezone,
-            weekday: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-          });
+          if (w?.timezone) {
+            localTime = new Date().toLocaleString('es-ES', {
+              timeZone: w.timezone,
+              weekday: 'short',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            });
+          }
         } catch { /* use fallback */ }
 
         const coords = `${city.lat.toFixed(6)},${city.lon.toFixed(6)}`;

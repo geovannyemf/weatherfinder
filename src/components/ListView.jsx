@@ -45,7 +45,7 @@ export default function ListView({ cities, weatherData, sortBy }) {
       return (wb?.temperature ?? -999) - (wa?.temperature ?? -999);
     }
     if (sortBy === 'hora') {
-      return getLocalHour(a.timezone) - getLocalHour(b.timezone);
+      return getLocalHour(wa?.timezone) - getLocalHour(wb?.timezone);
     }
     if (sortBy === 'condicion') {
       return (wa?.condition?.type ?? '').localeCompare(wb?.condition?.type ?? '');
@@ -60,7 +60,7 @@ export default function ListView({ cities, weatherData, sortBy }) {
         const w = weatherData.get(city.id);
         const condition = w?.condition;
         const color = condition ? CONDITION_COLORS[condition.type] : '#718096';
-        const localTime = getLocalTime(city.timezone);
+        const localTime = getLocalTime(w?.timezone);
 
         return (
           <div
