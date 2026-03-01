@@ -81,7 +81,7 @@ export default function MapView({ cities, weatherData }) {
 
         marker.bindPopup(`
           <div class="map-popup">
-            <div class="popup-city">${condition?.icon || ''} ${city.name}, ${city.country}</div>
+            <div class="popup-city">${condition?.icon || ''} ${city.flag || ''} ${city.name}, ${city.country}</div>
             <div class="popup-temp">${w?.temperature != null ? w.temperature.toFixed(1) + '°C' : '--'}</div>
             <div class="popup-row">Sensación: ${w?.feelsLike != null ? w.feelsLike.toFixed(1) + '°C' : '--'}</div>
             <div class="popup-row">Humedad: ${w?.humidity != null ? w.humidity + '%' : '--'}</div>

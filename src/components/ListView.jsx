@@ -69,7 +69,7 @@ export default function ListView({ cities, weatherData, sortBy }) {
             style={{ '--card-color': color }}
           >
             <div className="card-header">
-              <div className="card-city-name">{city.name}</div>
+              <div className="card-city-name">{city.flag} {city.name}</div>
               <div className="card-country">{city.country}</div>
               {condition?.isActive && (
                 <span className="badge-live">EN VIVO</span>
