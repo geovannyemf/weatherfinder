@@ -70,10 +70,10 @@ export default function App() {
   const [weatherData, setWeatherData] = useState(new Map());
   const [loading, setLoading] = useState(true);
   const [loadingProgress, setLoadingProgress] = useState(0);
-  const [view, setView] = useState('map');
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
   const [countdown, setCountdown] = useState(REFRESH_INTERVAL);
   const [lastUpdate, setLastUpdate] = useState(null);
+  const [selectedCity, setSelectedCity] = useState(null);
 
   const fetchAllWeather = useCallback(async () => {
     setLoading(true);
@@ -162,20 +162,6 @@ export default function App() {
           <span className="header-globe">🌍</span>
           <h1>WEATHER FINDER</h1>
         </div>
-        <div className="header-controls">
-          <button
-            className={`view-btn ${view === 'map' ? 'active' : ''}`}
-            onClick={() => setView('map')}
-          >
-            🗺️ MAPA
-          </button>
-          <button
-            className={`view-btn ${view === 'list' ? 'active' : ''}`}
-            onClick={() => setView('list')}
-          >
-            ☰ LISTA
-          </button>
-        </div>
       </header>
 
       {loading && (
@@ -197,11 +183,18 @@ export default function App() {
       <Filters filters={filters} onChange={handleFilterChange} />
 
       <main className="app-main">
-        {view === 'map' ? (
-          <MapView cities={filteredCities} weatherData={weatherData} />
-        ) : (
-          <ListView cities={filteredCities} weatherData={weatherData} sortBy={filters.sortBy} />
-        )}
+        <ListView
+          cities={filteredCities}
+          weatherData={weatherData}
+          sortBy={filters.sortBy}
+          selectedCity={selectedCity}
+          onSelectCity={setSelectedCity}
+        />
+        <MapView
+          cities={filteredCities}
+          weatherData={weatherData}
+          selectedCity={selectedCity}
+        />
       </main>
     </div>
   );

@@ -1,13 +1,5 @@
 import { CONDITION_COLORS } from '../weatherUtils';
 
-function formatCoords(lat, lon) {
-  return `${lat.toFixed(6)},${lon.toFixed(6)}`;
-}
-
-function copyToClipboard(text) {
-  navigator.clipboard.writeText(text);
-}
-
 function getLocalHour(timezone) {
   try {
     const str = new Date().toLocaleString('es-ES', { timeZone: timezone, hour: '2-digit', hour12: false });
@@ -17,24 +9,7 @@ function getLocalHour(timezone) {
   }
 }
 
-function getLocalTime(timezone) {
-  const options = {
-    weekday: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  };
-  try {
-    if (timezone) {
-      return new Date().toLocaleString('es-ES', { ...options, timeZone: timezone });
-    }
-    return new Date().toLocaleString('es-ES', options);
-  } catch {
-    return new Date().toLocaleString('es-ES', options);
-  }
-}
-
-export default function ListView({ cities, weatherData, sortBy }) {
+export default function ListView({ cities, weatherData, sortBy, selectedCity, onSelectCity }) {
   const sorted = [...cities].sort((a, b) => {
     const wa = weatherData.get(a.id);
     const wb = weatherData.get(b.id);
@@ -58,65 +33,38 @@ export default function ListView({ cities, weatherData, sortBy }) {
   });
 
   return (
-    <div className="list-view">
-      {sorted.map(city => {
-        const w = weatherData.get(city.id);
-        const condition = w?.condition;
-        const color = condition ? CONDITION_COLORS[condition.type] : '#718096';
-        const localTime = getLocalTime(w?.timezone);
+    <div className="city-sidebar">
+      <div className="list-view">
+        {sorted.map(city => {
+          const w = weatherData.get(city.id);
+          const condition = w?.condition;
+          const color = condition ? CONDITION_COLORS[condition.type] : '#718096';
+          const isSelected = selectedCity?.id === city.id;
 
-        return (
-          <div
-            key={city.id}
-            className={`city-card ${condition?.isActive ? 'city-card-active' : ''}`}
-            style={{ '--card-color': color }}
-          >
-            <div className="card-header">
-              <div className="card-city-name">{city.flag} {city.name}</div>
-              <div className="card-country">{city.country}</div>
-              {condition?.isActive && (
-                <span className="badge-live">EN VIVO</span>
-              )}
-            </div>
-            <div className="card-condition" style={{ color }}>
-              <span className="card-icon">{condition?.icon || '❓'}</span>
-              <span className="card-condition-label">{condition?.label || '--'}</span>
-            </div>
-            <div className="card-temp">
-              {w?.temperature != null ? `${w.temperature.toFixed(1)}°C` : '--'}
-            </div>
-            <div className="card-data">
-              <div className="card-data-row">
-                <span className="card-data-label">Sensación</span>
-                <span className="card-data-value">{w?.feelsLike != null ? `${w.feelsLike.toFixed(1)}°C` : '--'}</span>
+          return (
+            <div
+              key={city.id}
+              className={[
+                'city-list-item',
+                condition?.isActive ? 'city-list-item-active' : '',
+                isSelected ? 'city-list-item-selected' : '',
+              ].filter(Boolean).join(' ')}
+              style={{ '--item-color': color }}
+              onClick={() => onSelectCity(city)}
+            >
+              <span className="item-icon">{condition?.icon || '❓'}</span>
+              <div className="item-info">
+                <div className="item-name">{city.flag} {city.name}</div>
+                <div className="item-sub">{city.country} · {condition?.label || '--'}</div>
               </div>
-              <div className="card-data-row">
-                <span className="card-data-label">Humedad</span>
-                <span className="card-data-value">{w?.humidity != null ? `${w.humidity}%` : '--'}</span>
+              <div className="item-temp" style={{ color }}>
+                {w?.temperature != null ? `${w.temperature.toFixed(1)}°C` : '--'}
               </div>
-              <div className="card-data-row">
-                <span className="card-data-label">Viento</span>
-                <span className="card-data-value">{w?.windspeed != null ? `${w.windspeed.toFixed(1)} km/h` : '--'}</span>
-              </div>
-              <div className="card-data-row">
-                <span className="card-data-label">Precip.</span>
-                <span className="card-data-value">{w?.precipitation != null ? `${w.precipitation} mm` : '--'}</span>
-              </div>
+              {condition?.isActive && <span className="badge-live">EN VIVO</span>}
             </div>
-            <div className="card-time">🕐 {localTime}</div>
-            <div className="card-coords">
-              <span className="coords-text">📍 {formatCoords(city.lat, city.lon)}</span>
-              <button
-                className="copy-btn"
-                onClick={() => copyToClipboard(formatCoords(city.lat, city.lon))}
-                title="Copiar coordenadas"
-              >
-                📋
-              </button>
-            </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </div>
   );
 }

@@ -294,15 +294,94 @@ h1 {
 .app-main {
   flex: 1;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   min-height: 0;
+  overflow: hidden;
+}
+
+/* CITY SIDEBAR */
+.city-sidebar {
+  width: 370px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border);
+  overflow: hidden;
+}
+
+/* LIST VIEW (scrollable area inside sidebar) */
+.list-view {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 6px;
+}
+
+.city-list-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border-left: 3px solid transparent;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.city-list-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.city-list-item-active {
+  border-left-color: var(--item-color, var(--accent));
+}
+
+.city-list-item-selected {
+  background: rgba(66, 153, 225, 0.1);
+  border-left-color: var(--item-color, var(--accent));
+}
+
+.item-icon {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.item-name {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-sub {
+  font-size: 0.68rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-temp {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.85rem;
+  font-weight: 700;
+  flex-shrink: 0;
 }
 
 /* MAP */
 .map-wrapper {
   flex: 1;
   position: relative;
-  min-height: 500px;
+  min-height: 0;
 }
 
 .map-container {
@@ -329,22 +408,6 @@ h1 {
 .popup-row { font-size: 0.78rem; color: var(--text-secondary); padding: 2px 0; }
 .popup-condition { font-weight: 600; color: var(--accent); }
 .popup-time { font-family: 'Space Mono', monospace; font-size: 0.72rem; }
-
-/* LIST VIEW */
-.list-view {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  padding: 20px 24px;
-  overflow-y: auto;
-}
-
-@media (max-width: 900px) {
-  .list-view { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 600px) {
-  .list-view { grid-template-columns: 1fr; }
-}
 
 .city-card {
   background: var(--bg-card);

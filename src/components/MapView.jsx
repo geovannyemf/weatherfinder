@@ -2,10 +2,11 @@ import { useEffect, useRef } from 'react';
 import 'leaflet/dist/leaflet.css';
 import { CONDITION_COLORS } from '../weatherUtils';
 
-export default function MapView({ cities, weatherData }) {
+export default function MapView({ cities, weatherData, selectedCity }) {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const markersRef = useRef([]);
+  const markersMapRef = useRef(new Map());
 
   useEffect(() => {
     let L;
@@ -48,6 +49,7 @@ export default function MapView({ cities, weatherData }) {
 
       markersRef.current.forEach(m => m.remove());
       markersRef.current = [];
+      markersMapRef.current.clear();
 
       cities.forEach(city => {
         const w = weatherData.get(city.id);
@@ -116,11 +118,22 @@ export default function MapView({ cities, weatherData }) {
 
         marker.addTo(mapInstanceRef.current);
         markersRef.current.push(marker);
+        markersMapRef.current.set(city.id, marker);
       });
     }
 
     updateMarkers();
   }, [cities, weatherData]);
+
+  useEffect(() => {
+    if (!selectedCity || !mapInstanceRef.current) return;
+    const map = mapInstanceRef.current;
+    map.once('moveend', () => {
+      const marker = markersMapRef.current.get(selectedCity.id);
+      if (marker) marker.openPopup();
+    });
+    map.flyTo([selectedCity.lat, selectedCity.lon], 10, { duration: 1.5 });
+  }, [selectedCity]);
 
   return (
     <div className="map-wrapper">
