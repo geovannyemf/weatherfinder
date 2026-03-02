@@ -414,6 +414,8 @@ h1 {
 }
 
 .card-icon { font-size: 1.2rem; }
+.card-icon .weather-icon-img { width: 32px; height: 32px; object-fit: contain; }
+.weather-icon-img { image-rendering: auto; }
 .card-condition-label { font-size: 0.8rem; font-weight: 500; }
 
 .card-temp {

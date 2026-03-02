@@ -1,4 +1,4 @@
-import { CONDITION_COLORS } from '../weatherUtils';
+import { CONDITION_COLORS, getWeatherIconUrl } from '../weatherUtils';
 
 function formatCoords(lat, lon) {
   return `${lat.toFixed(6)},${lon.toFixed(6)}`;
@@ -79,7 +79,11 @@ export default function ListView({ cities, weatherData, sortBy }) {
               )}
             </div>
             <div className="card-condition" style={{ color }}>
-              <span className="card-icon">{condition?.icon || '❓'}</span>
+              <span className="card-icon">
+                {condition?.type
+                  ? <img src={getWeatherIconUrl(condition.type, w?.isDay !== false)} alt={condition.label} className="weather-icon-img" />
+                  : '❓'}
+              </span>
               <span className="card-condition-label">{condition?.label || '--'}</span>
             </div>
             <div className="card-temp">

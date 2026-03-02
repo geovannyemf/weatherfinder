@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import 'leaflet/dist/leaflet.css';
-import { CONDITION_COLORS } from '../weatherUtils';
+import { CONDITION_COLORS, getWeatherIconUrl } from '../weatherUtils';
 
 export default function MapView({ cities, weatherData }) {
   const mapRef = useRef(null);
@@ -90,9 +90,14 @@ export default function MapView({ cities, weatherData }) {
         const coords = `${city.lat.toFixed(6)},${city.lon.toFixed(6)}`;
         const popupId = `copy-btn-${city.id}`;
 
+        const iconUrl = condition?.type ? getWeatherIconUrl(condition.type, w?.isDay !== false) : '';
+        const iconHtml = iconUrl
+          ? `<img src="${iconUrl}" alt="${condition?.label || ''}" class="weather-icon-img" style="width:24px;height:24px;vertical-align:middle;" />`
+          : (condition?.icon || '');
+
         marker.bindPopup(`
           <div class="map-popup">
-            <div class="popup-city">${condition?.icon || ''} ${city.flag || ''} ${city.name}, ${city.country}</div>
+            <div class="popup-city">${iconHtml} ${city.flag || ''} ${city.name}, ${city.country}</div>
             <div class="popup-temp">${w?.temperature != null ? w.temperature.toFixed(1) + '°C' : '--'}</div>
             <div class="popup-row">Sensación: ${w?.feelsLike != null ? w.feelsLike.toFixed(1) + '°C' : '--'}</div>
             <div class="popup-row">Humedad: ${w?.humidity != null ? w.humidity + '%' : '--'}</div>

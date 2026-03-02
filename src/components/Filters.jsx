@@ -1,4 +1,4 @@
-import { ALL_CONDITIONS } from '../weatherUtils';
+import { ALL_CONDITIONS, getWeatherIconUrl } from '../weatherUtils';
 
 const REGIONS = [
   { value: '', label: 'Todas' },
@@ -79,7 +79,7 @@ export default function Filters({ filters, onChange }) {
                 title={c.label}
                 style={conditions.includes(c.type) ? { borderColor: c.color, color: c.color } : {}}
               >
-                {c.icon} {c.label}
+                <img src={getWeatherIconUrl(c.type, true)} alt={c.label} className="weather-icon-img" style={{ width: '20px', height: '20px', verticalAlign: 'middle' }} /> {c.label}
               </button>
             ))}
           </div>

@@ -30,7 +30,7 @@ function getLocalHour(timezone) {
   }
 }
 
-const OPEN_METEO_PARAMS = 'current=temperature_2m,precipitation,weathercode,relative_humidity_2m,windspeed_10m,windgusts_10m,apparent_temperature,cloudcover,visibility&forecast_days=1';
+const OPEN_METEO_PARAMS = 'current=temperature_2m,precipitation,weathercode,relative_humidity_2m,windspeed_10m,windgusts_10m,apparent_temperature,cloudcover,visibility,is_day&forecast_days=1';
 
 function buildWeatherUrl(city) {
   return `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&${OPEN_METEO_PARAMS}&timezone=auto`;
@@ -61,6 +61,7 @@ async function fetchCityWeather(city) {
     windspeed: weatherParams.windspeed,
     windgust: weatherParams.windgust,
     weathercode: weatherParams.weathercode,
+    isDay: current.is_day === 1,
     timezone: data.timezone,
     condition: getCondition(weatherParams.weathercode, weatherParams.windspeed, weatherParams),
   };
