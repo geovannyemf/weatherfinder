@@ -18,16 +18,19 @@ function getLocalHour(timezone) {
 }
 
 function getLocalTime(timezone) {
+  const options = {
+    weekday: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  };
   try {
-    return new Date().toLocaleString('es-ES', {
-      timeZone: timezone,
-      weekday: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    if (timezone) {
+      return new Date().toLocaleString('es-ES', { ...options, timeZone: timezone });
+    }
+    return new Date().toLocaleString('es-ES', options);
   } catch {
-    return '--';
+    return new Date().toLocaleString('es-ES', options);
   }
 }
 
@@ -45,7 +48,7 @@ export default function ListView({ cities, weatherData, sortBy }) {
       return (wb?.temperature ?? -999) - (wa?.temperature ?? -999);
     }
     if (sortBy === 'hora') {
-      return getLocalHour(a.timezone) - getLocalHour(b.timezone);
+      return getLocalHour(wa?.timezone) - getLocalHour(wb?.timezone);
     }
     if (sortBy === 'condicion') {
       return (wa?.condition?.type ?? '').localeCompare(wb?.condition?.type ?? '');
@@ -60,7 +63,7 @@ export default function ListView({ cities, weatherData, sortBy }) {
         const w = weatherData.get(city.id);
         const condition = w?.condition;
         const color = condition ? CONDITION_COLORS[condition.type] : '#718096';
-        const localTime = getLocalTime(city.timezone);
+        const localTime = getLocalTime(w?.timezone);
 
         return (
           <div
@@ -69,7 +72,7 @@ export default function ListView({ cities, weatherData, sortBy }) {
             style={{ '--card-color': color }}
           >
             <div className="card-header">
-              <div className="card-city-name">{city.name}</div>
+              <div className="card-city-name">{city.flag} {city.name}</div>
               <div className="card-country">{city.country}</div>
               {condition?.isActive && (
                 <span className="badge-live">EN VIVO</span>

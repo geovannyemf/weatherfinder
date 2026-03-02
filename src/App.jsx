@@ -33,7 +33,7 @@ function getLocalHour(timezone) {
 const OPEN_METEO_PARAMS = 'current=temperature_2m,precipitation,weathercode,relative_humidity_2m,windspeed_10m,windgusts_10m,apparent_temperature,cloudcover,visibility&forecast_days=1';
 
 function buildWeatherUrl(city) {
-  return `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&${OPEN_METEO_PARAMS}&timezone=${city.timezone}`;
+  return `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&${OPEN_METEO_PARAMS}&timezone=auto`;
 }
 
 async function fetchCityWeather(city) {
@@ -61,6 +61,7 @@ async function fetchCityWeather(city) {
     windspeed: weatherParams.windspeed,
     windgust: weatherParams.windgust,
     weathercode: weatherParams.weathercode,
+    timezone: data.timezone,
     condition: getCondition(weatherParams.weathercode, weatherParams.windspeed, weatherParams),
   };
 }
@@ -132,7 +133,7 @@ export default function App() {
       const temp = w.temperature;
       if (temp != null && (temp < filters.minTemp || temp > filters.maxTemp)) return false;
 
-      const hour = getLocalHour(city.timezone);
+      const hour = getLocalHour(w.timezone);
       if (hour < filters.minHour || hour > filters.maxHour) return false;
 
       return true;

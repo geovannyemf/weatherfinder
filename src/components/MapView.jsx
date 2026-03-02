@@ -67,21 +67,32 @@ export default function MapView({ cities, weatherData }) {
 
         let localTime = '--';
         try {
-          localTime = new Date().toLocaleString('es-ES', {
-            timeZone: city.timezone,
+          const options = {
             weekday: 'short',
             day: 'numeric',
             hour: '2-digit',
             minute: '2-digit'
-          });
-        } catch { /* use fallback */ }
+          };
+          if (w?.timezone) {
+            localTime = new Date().toLocaleString('es-ES', {
+              ...options,
+              timeZone: w.timezone
+            });
+          } else {
+            // Fallback to browser-local time when timezone is missing
+            localTime = new Date().toLocaleString('es-ES', options);
+          }
+        } catch {
+          // Final fallback: browser-local time without explicit timezone
+          localTime = new Date().toLocaleString('es-ES');
+        }
 
         const coords = `${city.lat.toFixed(6)},${city.lon.toFixed(6)}`;
         const popupId = `copy-btn-${city.id}`;
 
         marker.bindPopup(`
           <div class="map-popup">
-            <div class="popup-city">${condition?.icon || ''} ${city.name}, ${city.country}</div>
+            <div class="popup-city">${condition?.icon || ''} ${city.flag || ''} ${city.name}, ${city.country}</div>
             <div class="popup-temp">${w?.temperature != null ? w.temperature.toFixed(1) + '°C' : '--'}</div>
             <div class="popup-row">Sensación: ${w?.feelsLike != null ? w.feelsLike.toFixed(1) + '°C' : '--'}</div>
             <div class="popup-row">Humedad: ${w?.humidity != null ? w.humidity + '%' : '--'}</div>
