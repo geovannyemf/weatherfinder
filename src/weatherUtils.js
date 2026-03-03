@@ -1,6 +1,47 @@
 // Sistema de clasificación de clima Pokémon GO
 // Basado en los 7 climas oficiales del juego
 
+// Iconos oficiales de Pokémon GO (Bulbapedia)
+const BULBA_BASE = 'https://bulbapedia.bulbagarden.net/wiki/Special:FilePath/';
+export const PGO_ICON_URLS = {
+  SUNNY_DAY:           `${BULBA_BASE}Sunny_icon_GO.png`,
+  SUNNY_NIGHT:         `${BULBA_BASE}Clear_icon_GO.png`,
+  PARTLY_CLOUDY_DAY:   `${BULBA_BASE}Partly_cloudy_day_icon_GO.png`,
+  PARTLY_CLOUDY_NIGHT: `${BULBA_BASE}Partly_cloudy_night_icon_GO.png`,
+  RAIN:                `${BULBA_BASE}Rain_icon_GO.png`,
+  CLOUDY:              `${BULBA_BASE}Cloudy_icon_GO.png`,
+  WINDY:               `${BULBA_BASE}Windy_icon_GO.png`,
+  SNOW:                `${BULBA_BASE}Snow_icon_GO.png`,
+  FOG:                 `${BULBA_BASE}Fog_icon_GO.png`,
+};
+
+/**
+ * Returns the Pokémon GO icon URL for a given weather type and day/night state.
+ * @param {string} type - Weather type (e.g. 'SUNNY', 'RAIN')
+ * @param {boolean} isDay - Whether it is currently daytime
+ * @returns {string} Icon URL
+ */
+export function getWeatherIconUrl(type, isDay = true) {
+  switch (type) {
+    case 'SUNNY':
+      return isDay ? PGO_ICON_URLS.SUNNY_DAY : PGO_ICON_URLS.SUNNY_NIGHT;
+    case 'PARTLY_CLOUDY':
+      return isDay ? PGO_ICON_URLS.PARTLY_CLOUDY_DAY : PGO_ICON_URLS.PARTLY_CLOUDY_NIGHT;
+    case 'RAIN':
+      return PGO_ICON_URLS.RAIN;
+    case 'CLOUDY':
+      return PGO_ICON_URLS.CLOUDY;
+    case 'WINDY':
+      return PGO_ICON_URLS.WINDY;
+    case 'SNOW':
+      return PGO_ICON_URLS.SNOW;
+    case 'FOG':
+      return PGO_ICON_URLS.FOG;
+    default:
+      return PGO_ICON_URLS.CLOUDY;
+  }
+}
+
 export const PGO_WEATHERS = {
   SUNNY: {
     id: 'SUNNY',
