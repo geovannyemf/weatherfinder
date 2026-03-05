@@ -2,10 +2,13 @@ import { useEffect, useRef } from 'react';
 import 'leaflet/dist/leaflet.css';
 import { CONDITION_COLORS, getWeatherIconUrl } from '../weatherUtils';
 
-export default function MapView({ cities, weatherData }) {
+const POPUP_OPEN_DELAY = 700;
+
+export default function MapView({ cities, weatherData, selectedCityId }) {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const markersRef = useRef([]);
+  const markersMapRef = useRef(new Map());
 
   useEffect(() => {
     let L;
@@ -48,6 +51,7 @@ export default function MapView({ cities, weatherData }) {
 
       markersRef.current.forEach(m => m.remove());
       markersRef.current = [];
+      markersMapRef.current.clear();
 
       cities.forEach(city => {
         const w = weatherData.get(city.id);
@@ -121,11 +125,28 @@ export default function MapView({ cities, weatherData }) {
 
         marker.addTo(mapInstanceRef.current);
         markersRef.current.push(marker);
+        markersMapRef.current.set(city.id, marker);
       });
     }
 
     updateMarkers();
   }, [cities, weatherData]);
+
+  useEffect(() => {
+    if (!selectedCityId || !mapInstanceRef.current) return;
+
+    const city = cities.find(c => c.id === selectedCityId);
+    if (!city) return;
+
+    mapInstanceRef.current.flyTo([city.lat, city.lon], 10, { duration: 1.2 });
+
+    const timeout = setTimeout(() => {
+      const marker = markersMapRef.current.get(selectedCityId);
+      if (marker) marker.openPopup();
+    }, POPUP_OPEN_DELAY);
+
+    return () => clearTimeout(timeout);
+  }, [selectedCityId, cities]);
 
   return (
     <div className="map-wrapper">

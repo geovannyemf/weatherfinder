@@ -510,6 +510,126 @@ h1 {
   background: rgba(0,0,0,0.1);
 }
 
+/* SPLIT VIEW */
+.split-view {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+  height: 100%;
+}
+
+.split-panel-left {
+  width: 380px;
+  flex-shrink: 0;
+  overflow-y: auto;
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border);
+}
+
+.split-panel-right {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  position: relative;
+}
+
+.split-panel-right .map-wrapper {
+  min-height: 0;
+}
+
+.split-city-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  border-left: 3px solid transparent;
+  cursor: pointer;
+  transition: background 0.15s, border-left-color 0.15s;
+}
+
+.split-city-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.split-city-item.selected {
+  background: rgba(66, 153, 225, 0.08);
+  border-left-color: var(--item-color, var(--accent));
+}
+
+.split-city-icon {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+.split-city-icon .weather-icon-img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.split-city-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.split-city-name-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.split-city-name {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.split-city-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.split-city-country {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--text-secondary);
+  background: var(--bg-card);
+  padding: 1px 5px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.split-city-condition {
+  font-size: 0.7rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.split-city-temp {
+  font-family: 'Space Mono', monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  flex-shrink: 0;
+  min-width: 48px;
+  text-align: right;
+}
+
 /* BG ANIMATIONS */
 .bg-animation {
   position: fixed;
