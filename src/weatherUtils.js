@@ -1,18 +1,28 @@
 // Sistema de clasificación de clima Pokémon GO
 // Basado en los 7 climas oficiales del juego
 
-// Iconos oficiales de Pokémon GO (Bulbapedia)
-const BULBA_BASE = 'https://bulbapedia.bulbagarden.net/wiki/Special:FilePath/';
+// Importar iconos locales desde assets/images
+import SunnyIcon from './assets/images/Sunny_icon_GO.png';
+import ClearIcon from './assets/images/Clear_icon_GO.png';
+import PartlyCloudyDayIcon from './assets/images/Partly_cloudy_day_icon_GO.png';
+import PartlyCloudyNightIcon from './assets/images/Partly_cloudy_night_icon_GO.png';
+import RainIcon from './assets/images/Rain_icon_GO.png';
+import CloudyIcon from './assets/images/Cloudy_icon_GO.png';
+import WindyIcon from './assets/images/Windy_icon_GO.png';
+import SnowIcon from './assets/images/Snow_icon_GO.png';
+import FogIcon from './assets/images/Fog_icon_GO.png';
+
+// Iconos oficiales de Pokémon GO (locales)
 export const PGO_ICON_URLS = {
-  SUNNY_DAY:           `${BULBA_BASE}Sunny_icon_GO.png`,
-  SUNNY_NIGHT:         `${BULBA_BASE}Clear_icon_GO.png`,
-  PARTLY_CLOUDY_DAY:   `${BULBA_BASE}Partly_cloudy_day_icon_GO.png`,
-  PARTLY_CLOUDY_NIGHT: `${BULBA_BASE}Partly_cloudy_night_icon_GO.png`,
-  RAIN:                `${BULBA_BASE}Rain_icon_GO.png`,
-  CLOUDY:              `${BULBA_BASE}Cloudy_icon_GO.png`,
-  WINDY:               `${BULBA_BASE}Windy_icon_GO.png`,
-  SNOW:                `${BULBA_BASE}Snow_icon_GO.png`,
-  FOG:                 `${BULBA_BASE}Fog_icon_GO.png`,
+  SUNNY_DAY:           SunnyIcon,
+  SUNNY_NIGHT:         ClearIcon,
+  PARTLY_CLOUDY_DAY:   PartlyCloudyDayIcon,
+  PARTLY_CLOUDY_NIGHT: PartlyCloudyNightIcon,
+  RAIN:                RainIcon,
+  CLOUDY:              CloudyIcon,
+  WINDY:               WindyIcon,
+  SNOW:                SnowIcon,
+  FOG:                 FogIcon,
 };
 
 /**
