@@ -5,7 +5,7 @@ import { getCondition } from './weatherUtils';
 import StatsBar from './components/StatsBar';
 import Filters from './components/Filters';
 import MapView from './components/MapView';
-import ListView from './components/ListView';
+import SplitView from './components/SplitView';
 
 const REFRESH_INTERVAL = 600; // seconds (10 minutes)
 const BATCH_SIZE = 10;
@@ -201,7 +201,7 @@ export default function App() {
         {view === 'map' ? (
           <MapView cities={filteredCities} weatherData={weatherData} />
         ) : (
-          <ListView cities={filteredCities} weatherData={weatherData} sortBy={filters.sortBy} />
+          <SplitView cities={filteredCities} weatherData={weatherData} sortBy={filters.sortBy} />
         )}
       </main>
     </div>
